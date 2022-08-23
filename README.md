@@ -1,2 +1,2 @@
 # AndroidJS
-Node Module to build a frontend into yan Android APK
+Node Module to build frontend into Android APK

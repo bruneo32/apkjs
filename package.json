@@ -1,0 +1,22 @@
+{
+  "name": "androidjs",
+  "version": "1.0.0",
+  "description": "build a frontend into Android APK",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && cp -R assets/* node_modules/androidjs/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bruneo32/AndroidJS.git"
+  },
+  "author": "Bruno Castro Garcia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bruneo32/AndroidJS/issues"
+  },
+  "homepage": "https://github.com/bruneo32/AndroidJS#readme",
+  "devDependencies": {
+    "@types/node": "^18.7.11"
+  }
+}
