@@ -1,11 +1,14 @@
 import fs from "fs";
-import { com } from "./cmd";
 import { sep } from "path";
-import { Appdata } from "./appdata";
+import { load as JSY_Load, dump as JSY_Dump } from "js-yaml";
+
+import { com } from "./cmd";
+import { Appdata, AppYml } from "./appdata";
 import { exec } from "./exec";
 
+
 export const Global = {
-	VERSION: 0.1,
+	VERSION: 0.1
 }
 
 export async function main(argv2: string[]) {
@@ -52,12 +55,13 @@ export async function main(argv2: string[]) {
 					break;
 				}
 
-			} catch (err) {
-				console.error("ERR!", err);
+			} catch (err: any) {
+				console.error("ERR!", err?.message ?? err);
 				break;
 			}
 
-			// If already decompiled the base.apk, do not decompile again
+			// Decompile base.apk
+			// If already decompiled, do not decompile again
 			if (!fs.existsSync(cachePath)) {
 				console.log(">", com["apktool_d"]);
 				await exec(com["apktool_d"]);
@@ -65,14 +69,33 @@ export async function main(argv2: string[]) {
 				console.log("WARN! Already decompiled cache. If unexpected problems, try 'androidjs clear-cache'");
 			}
 
-			console.log(appdata);
 
+			// Modify APK
+			console.log(appdata);
+			const ymlPath = cachePath + sep + "apktool.yml";
+
+			try {
+
+				const ymlData: AppYml = <AppYml>JSY_Load(fs.readFileSync(ymlPath, { encoding: "utf-8", flag: "r" })?.replace("!!brut.androlib.meta.MetaInfo", ""));
+				if (!ymlData) { throw "Error reading apktool.yml"; }
+
+				ymlData.packageInfo.renameManifestPackage = appdata?.appinfo?.package;
+
+				fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData, ), { encoding: "utf-8", flag: "w" });
+
+			} catch (err: any) {
+				console.error("ERR!", err?.message ?? err);
+				break;
+			}
+
+
+			// Recompile and move
 			console.log(">", com["apktool_b"]);
 			await exec(com["apktool_b"]);
 
 			fs.rename(__dirname + sep + "output.apk", appdata?.output, (err) => {
 				if (err) {
-					console.error(err?.message);
+					console.error("ERR!", err?.message ?? err);
 				}
 
 				console.log('Successfully build apk')
@@ -93,7 +116,7 @@ export async function main(argv2: string[]) {
 				force: true,
 			}, (err) => {
 				if (err) {
-					console.error("ERR!", err?.message);
+					console.error("ERR!", err?.message ?? err);
 				} else {
 					console.log("Cache clear successful");
 				}

@@ -12,7 +12,7 @@ export async function exec(cmd: string) {
 			if (e.stderr) { console.error(e.stderr); }
 		});
 
-	} catch (err) {
-		console.error(err);
+	} catch (err: any) {
+		console.error("ERR!", err?.message ?? err);
 	}
 }

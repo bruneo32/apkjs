@@ -10,6 +10,6 @@ async function start() {
 }
 
 start().catch((err: Error) => {
-	console.error("ERR! " + err?.message);
+	console.error("ERR!", err?.message ?? err);
 	process.exit(2);
 });

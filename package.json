@@ -18,5 +18,9 @@
   "homepage": "https://github.com/bruneo32/AndroidJS#readme",
   "devDependencies": {
     "@types/node": "^18.7.11"
+  },
+  "dependencies": {
+    "@types/js-yaml": "^4.0.5",
+    "js-yaml": "^4.1.0"
   }
 }
