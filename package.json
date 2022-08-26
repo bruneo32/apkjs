@@ -4,7 +4,7 @@
   "description": "build a frontend into Android APK",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && cp -R assets/* node_modules/androidjs/"
+    "build": "tsc && cp -R assets/* node_modules/androidjs/."
   },
   "repository": {
     "type": "git",
