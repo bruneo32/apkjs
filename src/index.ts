@@ -5,6 +5,7 @@ import { load as JSY_Load, dump as JSY_Dump } from "js-yaml";
 import { com } from "./cmd";
 import { Appdata, AppYml } from "./appdata";
 import { exec } from "./exec";
+import { closeLog, logPath } from "./logger";
 
 
 export const Global = {
@@ -12,7 +13,6 @@ export const Global = {
 }
 
 export async function main(argv2: string[]) {
-	console.log(argv2);
 	const cachePath = __dirname + sep + "__apk__";
 
 	switch (argv2[0]) {
@@ -86,14 +86,16 @@ export async function main(argv2: string[]) {
 			// Decompile base.apk
 			// If already decompiled, do not decompile again
 			if (!fs.existsSync(cachePath)) {
-				console.log(">", com["apktool_d"]);
+				console.log("Decoding... (first time, this will be cached)");
+				closeLog("$> " + com["apktool_d"]);
 				await exec(com["apktool_d"]);
 			} else {
-				console.log("WARN! Already decompiled cache. If unexpected problems, try 'androidjs clear-cache'");
+				console.log("WARN! Already decoded cache. If unexpected problems, try 'androidjs clear-cache'");
 			}
 
 
 			// Modify APK
+			console.log("Creating app");
 			console.log(appdata);
 			const ymlPath = cachePath + sep + "apktool.yml";
 
@@ -106,9 +108,9 @@ export async function main(argv2: string[]) {
 			fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
 
 
-
 			// Recompile and move
-			console.log(">", com["apktool_b"]);
+			console.log("Building...");
+			closeLog("$> " + com["apktool_b"]);
 			await exec(com["apktool_b"]);
 
 			fs.rename(__dirname + sep + "output.apk", appdata?.output, (err) => {
@@ -134,6 +136,25 @@ export async function main(argv2: string[]) {
 				console.log("Cache clear successful");
 			});
 
+		} break;
+
+		case "clear-logs": {
+			if (!fs.existsSync(logPath.info) && !fs.existsSync(logPath.error)) {
+				console.log("Logs are already clear");
+				break;
+			}
+
+			fs.rm(logPath.info, {
+				force: true,
+			}, (err) => {
+				if (err) { throw err; }
+			});
+
+			fs.rm(logPath.error, {
+				force: true,
+			}, (err) => {
+				if (err) { throw err; }
+			});
 		} break;
 
 		default: {
