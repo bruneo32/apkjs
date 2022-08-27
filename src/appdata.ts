@@ -9,7 +9,7 @@ export interface Appinfo {
 	package: string,
 	appname: string,
 	versionCode: number,
-	versionName: number,
+	versionName: string,
 
 	color: string,
 	icons: any

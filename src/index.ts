@@ -17,17 +17,53 @@ export async function main(argv2: string[]) {
 
 	switch (argv2[0]) {
 		case "-h":
-		case "--help":
+		case "--help": {
 			console.log("HELP");
-			break;
+		} break;
 
 		case "-v":
-		case "--version":
+		case "--version": {
 			console.log(Global.VERSION.toFixed(1));
-			break;
+		} break;
+
+		case "init": {
+			const appdataPath = argv2[1] ?? "appdata.json";
+
+			const defaultAppdata: Appdata = {
+				include: "dist",
+				output: "output.apk",
+				appinfo: {
+					package: "com.company.example",
+					appname: "example",
+					color: "#0066FF",
+					versionCode: 1,
+					versionName: "1.0",
+					icons: null
+				}
+			};
+
+			try {
+				if (fs.existsSync(appdataPath)) {
+					console.error("ERR! Already exists '" + appdataPath + "'");
+					break;
+				}
+
+				fs.writeFile(appdataPath, JSON.stringify(defaultAppdata, null, 2), {
+					encoding: "utf-8",
+					flag: "w"
+				}, (err) => {
+					if (err) { throw err; }
+				});
+
+			} catch (err: any) {
+				console.error("ERR!", err?.message ?? err);
+				break;
+			}
+
+		} break;
 
 		case "b":
-		case "build":
+		case "build": {
 			const appdataPath = argv2[1] ?? "appdata.json";
 			let appdata: Appdata | null = null;
 
@@ -81,7 +117,7 @@ export async function main(argv2: string[]) {
 
 				ymlData.packageInfo.renameManifestPackage = appdata?.appinfo?.package;
 
-				fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData, ), { encoding: "utf-8", flag: "w" });
+				fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
 
 			} catch (err: any) {
 				console.error("ERR!", err?.message ?? err);
@@ -101,11 +137,11 @@ export async function main(argv2: string[]) {
 				console.log('Successfully build apk')
 			})
 
-			break;
+		} break;
 
 
 		case "cc":
-		case "clear-cache":
+		case "clear-cache": {
 			if (!fs.existsSync(cachePath)) {
 				console.log("Cache is already clear");
 				break;
@@ -122,11 +158,11 @@ export async function main(argv2: string[]) {
 				}
 			});
 
-			break;
+		} break;
 
-		default:
+		default: {
 			console.log("Nothing to do. Type 'androidjs --help' to get more information");
-			break;
+		} break;
 	}
 
 }
