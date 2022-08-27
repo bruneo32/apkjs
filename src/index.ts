@@ -17,12 +17,14 @@ export async function main(argv2: string[]) {
 
 	switch (argv2[0]) {
 		case "-h":
-		case "--help": {
+		case "--help":
+		case "help": {
 			console.log("HELP");
 		} break;
 
 		case "-v":
-		case "--version": {
+		case "--version":
+		case "version": {
 			console.log(Global.VERSION.toFixed(1));
 		} break;
 
@@ -42,23 +44,16 @@ export async function main(argv2: string[]) {
 				}
 			};
 
-			try {
-				if (fs.existsSync(appdataPath)) {
-					console.error("ERR! Already exists '" + appdataPath + "'");
-					break;
-				}
-
-				fs.writeFile(appdataPath, JSON.stringify(defaultAppdata, null, 2), {
-					encoding: "utf-8",
-					flag: "w"
-				}, (err) => {
-					if (err) { throw err; }
-				});
-
-			} catch (err: any) {
-				console.error("ERR!", err?.message ?? err);
-				break;
+			if (fs.existsSync(appdataPath)) {
+				throw "Already exists '" + appdataPath + "'";
 			}
+
+			fs.writeFile(appdataPath, JSON.stringify(defaultAppdata, null, 2), {
+				encoding: "utf-8",
+				flag: "w"
+			}, (err) => {
+				if (err) { throw err; }
+			});
 
 		} break;
 
@@ -67,34 +62,26 @@ export async function main(argv2: string[]) {
 			const appdataPath = argv2[1] ?? "appdata.json";
 			let appdata: Appdata | null = null;
 
-			try {
-				if (!fs.existsSync(appdataPath) || !fs.lstatSync(appdataPath).isFile()) {
-					console.error("ERR! Not such file '" + appdataPath + "'");
-					break;
-				}
-
-				const data = fs.readFileSync(appdataPath, {
-					encoding: "utf-8",
-					flag: "r"
-				});
-
-				appdata = <Appdata>JSON.parse(data);
-
-				// Check basis
-				if (!appdata?.include) {
-					console.error("ERR! No 'include' field in appdata.json");
-					break;
-				}
-
-				if (!appdata?.output) {
-					console.error("ERR! No 'output' field in appdata.json");
-					break;
-				}
-
-			} catch (err: any) {
-				console.error("ERR!", err?.message ?? err);
-				break;
+			if (!fs.existsSync(appdataPath) || !fs.lstatSync(appdataPath).isFile()) {
+				throw "Not such file '" + appdataPath + "'";
 			}
+
+			const data = fs.readFileSync(appdataPath, {
+				encoding: "utf-8",
+				flag: "r"
+			});
+
+			appdata = <Appdata>JSON.parse(data);
+
+			// Check basis
+			if (!appdata?.include) {
+				throw "No 'include' field in appdata.json";
+			}
+
+			if (!appdata?.output) {
+				throw "No 'output' field in appdata.json";
+			}
+
 
 			// Decompile base.apk
 			// If already decompiled, do not decompile again
@@ -110,19 +97,14 @@ export async function main(argv2: string[]) {
 			console.log(appdata);
 			const ymlPath = cachePath + sep + "apktool.yml";
 
-			try {
 
-				const ymlData: AppYml = <AppYml>JSY_Load(fs.readFileSync(ymlPath, { encoding: "utf-8", flag: "r" })?.replace("!!brut.androlib.meta.MetaInfo", ""));
-				if (!ymlData) { throw "Error reading apktool.yml"; }
+			const ymlData: AppYml = <AppYml>JSY_Load(fs.readFileSync(ymlPath, { encoding: "utf-8", flag: "r" })?.replace("!!brut.androlib.meta.MetaInfo", ""));
+			if (!ymlData) { throw "Error reading apktool.yml"; }
 
-				ymlData.packageInfo.renameManifestPackage = appdata?.appinfo?.package;
+			ymlData.packageInfo.renameManifestPackage = appdata?.appinfo?.package;
 
-				fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
+			fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
 
-			} catch (err: any) {
-				console.error("ERR!", err?.message ?? err);
-				break;
-			}
 
 
 			// Recompile and move
@@ -130,12 +112,9 @@ export async function main(argv2: string[]) {
 			await exec(com["apktool_b"]);
 
 			fs.rename(__dirname + sep + "output.apk", appdata?.output, (err) => {
-				if (err) {
-					console.error("ERR!", err?.message ?? err);
-				}
-
+				if (err) { throw err; }
 				console.log('Successfully build apk')
-			})
+			});
 
 		} break;
 
@@ -151,11 +130,8 @@ export async function main(argv2: string[]) {
 				recursive: true,
 				force: true,
 			}, (err) => {
-				if (err) {
-					console.error("ERR!", err?.message ?? err);
-				} else {
-					console.log("Cache clear successful");
-				}
+				if (err) { throw err; }
+				console.log("Cache clear successful");
 			});
 
 		} break;
