@@ -8,7 +8,7 @@ export async function exec(cmd: string) {
 	try {
 
 		await execPromise(cmd).then((e: { stdout: any, stderr: any }) => {
-			if (e.stdout) { closeLog(e.stdout, LOG_LEVEL.INFO); }
+			// if (e.stdout) { closeLog(e.stdout, LOG_LEVEL.INFO); }
 			if (e.stderr) { closeLog(e.stderr, LOG_LEVEL.ERROR); }
 		});
 

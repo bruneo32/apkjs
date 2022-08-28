@@ -1,19 +1,27 @@
 import fs from "fs";
+import { platform } from "os";
 import { sep } from "path";
 import { load as JSY_Load, dump as JSY_Dump } from "js-yaml";
+import promptSync from "prompt-sync";
+const prompt = promptSync();
 
 import { com } from "./cmd";
-import { Appdata, AppYml } from "./appdata";
+import { Appdata, AppYml } from "./Appdata";
 import { exec } from "./exec";
 import { closeLog, logPath } from "./logger";
+import { Config, loadConfig, saveConfig } from "./Config";
 
 
 export const Global = {
-	VERSION: 0.1
-}
+	VERSION: 0.1,
+	isWin: false,
+	config: <Partial<Config>>{}
+};
 
 export async function main(argv2: string[]) {
 	const cachePath = __dirname + sep + "__apk__";
+	Global.config = loadConfig();
+	Global.isWin = platform().toLowerCase().includes("win");
 
 	switch (argv2[0]) {
 		case "-h":
@@ -86,7 +94,7 @@ export async function main(argv2: string[]) {
 			// Decompile base.apk
 			// If already decompiled, do not decompile again
 			if (!fs.existsSync(cachePath)) {
-				console.log("Decoding... (first time, this will be cached)");
+				console.log("Decoding... (once, this will be cached)");
 				closeLog("$> " + com["apktool_d"]);
 				await exec(com["apktool_d"]);
 			} else {
@@ -95,7 +103,7 @@ export async function main(argv2: string[]) {
 
 
 			// Modify APK
-			console.log("Creating app");
+			console.log("Creating app...");
 			console.log(appdata);
 			const ymlPath = cachePath + sep + "apktool.yml";
 
@@ -106,6 +114,11 @@ export async function main(argv2: string[]) {
 			ymlData.packageInfo.renameManifestPackage = appdata?.appinfo?.package;
 
 			fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
+
+			fs.cpSync(appdata.include, cachePath + sep + "assets", {
+				recursive: true,
+				force: true
+			});
 
 
 			// Recompile and move
@@ -120,6 +133,55 @@ export async function main(argv2: string[]) {
 
 		} break;
 
+		case "sign":
+		case "s": {
+			const apkPath = argv2[1];
+			if (!apkPath || apkPath == "help") {
+				console.log("To generate a keystore use: (change: my-keystore.keystore, name_alias)");
+				console.log("keytool -genkey -v -keystore my-keystore.keystore -alias name_alias -keyalg RSA -validity 10000");
+				break;
+			}
+
+			if (!fs.existsSync(apkPath) || !fs.lstatSync(apkPath).isFile()) {
+				throw "Not such file '" + apkPath + "'";
+			}
+
+			const keystore = argv2[2] ?? __dirname + sep + "debug.keystore";
+			const passw = argv2[3] ?? "123456";
+
+			if (!Global.config?.sdkBuildTools) {
+				console.log("For legal issues we cannot pack any SDK from android inside AndroidJS");
+				console.log("You need to setup SDK BuildTools Path for AndroidJS (Usually is: "
+					+ (Global.isWin
+						? "C:\\Users\\{Username}\\AppData\\Local\\Android\\Sdk\\build-tools\\31.0.0"
+						: "<sdk>/build-tools/31.0.0") + ")");
+				console.log();
+
+				Global.config.sdkBuildTools = prompt("SDK Path? ");
+				if (!Global.config?.sdkBuildTools) { throw "No SDK provided, sign by yourself"; }
+
+				saveConfig(Global.config);
+			}
+
+
+			// Prepare
+			const zipalign = Global.config.sdkBuildTools + sep + "zipalign -p 4 \"" + apkPath + "\" \"" + apkPath + ".aligned\"";
+			const apksigner = Global.config.sdkBuildTools + sep + "apksigner sign --ks \"" + keystore + "\" --ks-pass pass:" + passw + " --v1-signing-enabled true --v2-signing-enabled true --out \"" + apkPath + "\" \"" + apkPath + ".aligned\"";
+
+			// Go
+			console.log("Signing...");
+
+			closeLog("$> " + zipalign);
+			await exec(zipalign);
+
+			closeLog("$> " + apksigner);
+			await exec(apksigner);
+
+			fs.rm(apkPath + ".aligned", (err) => {
+				if (err) { throw err; }
+			});
+
+		} break;
 
 		case "cc":
 		case "clear-cache": {
