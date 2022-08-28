@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { main } from "./index";
-import { devDate, logPath } from "./logger";
+import { devDate, logPath } from "./controllers/Logger";
 
 async function start() {
 	if (process.env.CHDIR && process.env.CHDIR !== process.cwd()) {

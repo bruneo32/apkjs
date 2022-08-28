@@ -6,10 +6,11 @@ import promptSync from "prompt-sync";
 const prompt = promptSync();
 
 import { com } from "./cmd";
-import { Appdata, AppYml } from "./Appdata";
+import { Appdata, AppYml } from "./controllers/Appdata";
 import { exec } from "./exec";
-import { closeLog, logPath } from "./logger";
-import { Config, loadConfig, saveConfig } from "./Config";
+import { closeLog, logPath } from "./controllers/Logger";
+import { Config, loadConfig, saveConfig } from "./controllers/Config";
+import { helpTxt } from "./controllers/Help";
 
 
 export const Global = {
@@ -20,6 +21,7 @@ export const Global = {
 
 export async function main(argv2: string[]) {
 	const cachePath = __dirname + sep + "__apk__";
+
 	Global.config = loadConfig();
 	Global.isWin = platform().toLowerCase().includes("win");
 
@@ -27,7 +29,14 @@ export async function main(argv2: string[]) {
 		case "-h":
 		case "--help":
 		case "help": {
-			console.log("HELP");
+			console.log("AndroidJS: Build frontend into Android APK\n");
+
+			for (const k of Object.keys(helpTxt)) {
+				console.log(helpTxt[k] + "\n");
+			}
+
+			console.log("Type a command followed by 'help' to get specific information.");
+			console.log("Ex.:  androidjs init help");
 		} break;
 
 		case "-v":
@@ -37,6 +46,11 @@ export async function main(argv2: string[]) {
 		} break;
 
 		case "init": {
+			if (argv2[1] && argv2[1] == "help") {
+				console.log(helpTxt["init"]);
+				break;
+			}
+
 			const appdataPath = argv2[1] ?? "appdata.json";
 
 			const defaultAppdata: Appdata = {
@@ -65,8 +79,59 @@ export async function main(argv2: string[]) {
 
 		} break;
 
+		case "cc":
+		case "clear-cache": {
+			if (argv2[1] && argv2[1] == "help") {
+				console.log(helpTxt["clearCache"]);
+				break;
+			}
+
+			if (!fs.existsSync(cachePath)) {
+				console.log("Cache is already clear");
+				break;
+			}
+
+			fs.rm(cachePath, {
+				recursive: true,
+				force: true,
+			}, (err) => {
+				if (err) { throw err; }
+				console.log("Cache clear successful");
+			});
+
+		} break;
+
+		case "clear-logs": {
+			if (argv2[1] && argv2[1] == "help") {
+				console.log(helpTxt["clearLogs"]);
+				break;
+			}
+
+			if (!fs.existsSync(logPath.info) && !fs.existsSync(logPath.error)) {
+				console.log("Logs are already clear");
+				break;
+			}
+
+			fs.rm(logPath.info, {
+				force: true,
+			}, (err) => {
+				if (err) { throw err; }
+			});
+
+			fs.rm(logPath.error, {
+				force: true,
+			}, (err) => {
+				if (err) { throw err; }
+			});
+		} break;
+
 		case "b":
 		case "build": {
+			if (argv2[1] && argv2[1] == "build") {
+				console.log(helpTxt["init"]);
+				break;
+			}
+
 			const appdataPath = argv2[1] ?? "appdata.json";
 			let appdata: Appdata | null = null;
 
@@ -99,6 +164,10 @@ export async function main(argv2: string[]) {
 				await exec(com["apktool_d"]);
 			} else {
 				console.log("WARN! Already decoded cache. If unexpected problems, try 'androidjs clear-cache'");
+				fs.rmSync(cachePath + sep + "assets" + sep + "*", {
+					recursive: true,
+					force: true
+				});
 			}
 
 
@@ -135,8 +204,14 @@ export async function main(argv2: string[]) {
 
 		case "sign":
 		case "s": {
+			if (argv2[1] && argv2[1] == "help") {
+				console.log(helpTxt["sign"]);
+				break;
+			}
+
 			const apkPath = argv2[1];
-			if (!apkPath || apkPath == "help") {
+			if (!apkPath) {
+				console.log("! Keytool is part of JDK (required)");
 				console.log("To generate a keystore use: (change: my-keystore.keystore, name_alias)");
 				console.log("keytool -genkey -v -keystore my-keystore.keystore -alias name_alias -keyalg RSA -validity 10000");
 				break;
@@ -181,42 +256,6 @@ export async function main(argv2: string[]) {
 				if (err) { throw err; }
 			});
 
-		} break;
-
-		case "cc":
-		case "clear-cache": {
-			if (!fs.existsSync(cachePath)) {
-				console.log("Cache is already clear");
-				break;
-			}
-
-			fs.rm(cachePath, {
-				recursive: true,
-				force: true,
-			}, (err) => {
-				if (err) { throw err; }
-				console.log("Cache clear successful");
-			});
-
-		} break;
-
-		case "clear-logs": {
-			if (!fs.existsSync(logPath.info) && !fs.existsSync(logPath.error)) {
-				console.log("Logs are already clear");
-				break;
-			}
-
-			fs.rm(logPath.info, {
-				force: true,
-			}, (err) => {
-				if (err) { throw err; }
-			});
-
-			fs.rm(logPath.error, {
-				force: true,
-			}, (err) => {
-				if (err) { throw err; }
-			});
 		} break;
 
 		default: {

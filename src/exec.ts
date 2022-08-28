@@ -1,6 +1,6 @@
 import { exec as ex } from "child_process";
 import util from "node:util";
-import { closeLog, LOG_LEVEL } from "./logger";
+import { closeLog, LOG_LEVEL } from "./controllers/Logger";
 
 const execPromise = util.promisify(ex);
 
