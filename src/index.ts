@@ -6,7 +6,7 @@ import promptSync from "prompt-sync";
 const prompt = promptSync();
 
 import { com } from "./cmd";
-import { Appdata, AppYml } from "./controllers/Appdata";
+import { Appdata, AppYml, errorAppdata } from "./controllers/Appdata";
 import { exec } from "./exec";
 import { closeLog, logPath } from "./controllers/Logger";
 import { Config, loadConfig, saveConfig } from "./controllers/Config";
@@ -127,8 +127,8 @@ export async function main(argv2: string[]) {
 
 		case "b":
 		case "build": {
-			if (argv2[1] && argv2[1] == "build") {
-				console.log(helpTxt["init"]);
+			if (argv2[1] && argv2[1] == "help") {
+				console.log(helpTxt["build"]);
 				break;
 			}
 
@@ -147,14 +147,8 @@ export async function main(argv2: string[]) {
 			appdata = <Appdata>JSON.parse(data);
 
 			// Check basis
-			if (!appdata?.include) {
-				throw "No 'include' field in appdata.json";
-			}
-
-			if (!appdata?.output) {
-				throw "No 'output' field in appdata.json";
-			}
-
+			const errAppdata = errorAppdata(appdata);
+			if (errAppdata) { throw errAppdata; }
 
 			// Decompile base.apk
 			// If already decompiled, do not decompile again
@@ -173,14 +167,19 @@ export async function main(argv2: string[]) {
 
 			// Modify APK
 			console.log("Creating app...");
-			console.log(appdata);
+
 			const ymlPath = cachePath + sep + "apktool.yml";
 
+			const ymlData: AppYml = <AppYml>JSY_Load(fs.readFileSync(ymlPath, {
+				encoding: "utf-8",
+				flag: "r"
+			})?.replace("!!brut.androlib.meta.MetaInfo", ""));
 
-			const ymlData: AppYml = <AppYml>JSY_Load(fs.readFileSync(ymlPath, { encoding: "utf-8", flag: "r" })?.replace("!!brut.androlib.meta.MetaInfo", ""));
 			if (!ymlData) { throw "Error reading apktool.yml"; }
 
 			ymlData.packageInfo.renameManifestPackage = appdata?.appinfo?.package;
+			ymlData.versionInfo.versionCode = appdata?.appinfo?.versionCode?.toString() ?? 1;
+			ymlData.versionInfo.versionName = appdata?.appinfo?.versionName ?? "1.0";
 
 			fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
 
