@@ -25,11 +25,11 @@
   },
   "homepage": "https://github.com/bruneo32/AndroidJS#readme",
   "devDependencies": {
-    "@types/node": "^18.7.11"
+    "@types/js-yaml": "^4.0.5",
+    "@types/node": "^18.7.11",
+    "@types/prompt-sync": "^4.1.1"
   },
   "dependencies": {
-    "@types/js-yaml": "^4.0.5",
-    "@types/prompt-sync": "^4.1.1",
     "js-yaml": "^4.1.0",
     "prompt-sync": "^4.2.0",
     "xml-js": "^1.6.11"
