@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { writeFileSync } from "fs";
 import { main } from "./index";
 import { devDate, logPath } from "./controllers/Logger";

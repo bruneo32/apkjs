@@ -1,10 +1,18 @@
 {
   "name": "androidjs",
   "version": "1.0.0",
-  "description": "build a frontend into Android APK",
-  "main": "index.js",
+  "description": "Build a frontend into Android APK",
+  "main": "dist/index.js",
+  "bin": {
+    "androidjs": "dist/bin.js"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "preferGlobal": true,
   "scripts": {
-    "build": "tsc && cp -R assets/* node_modules/androidjs/."
+    "clean": "rm -Rf dist/*",
+    "build": "tsc && cp -Rnv assets/* dist/"
   },
   "repository": {
     "type": "git",
