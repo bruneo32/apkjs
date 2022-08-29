@@ -11,6 +11,7 @@ import { exec } from "./exec";
 import { closeLog, logPath } from "./controllers/Logger";
 import { Config, loadConfig, saveConfig } from "./controllers/Config";
 import { helpTxt } from "./controllers/Help";
+import { js2xml, xml2js } from "xml-js";
 
 
 export const Global = {
@@ -168,6 +169,7 @@ export async function main(argv2: string[]) {
 			// Modify APK
 			console.log("Creating app...");
 
+			// yml
 			const ymlPath = cachePath + sep + "apktool.yml";
 
 			const ymlData: AppYml = <AppYml>JSY_Load(fs.readFileSync(ymlPath, {
@@ -183,6 +185,52 @@ export async function main(argv2: string[]) {
 
 			fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
 
+			const apkValuesDir = cachePath + sep + "res" + sep + "values";
+
+			// strings.xml
+			const apkStringsXml = fs.readFileSync(apkValuesDir + sep + "strings.xml", {
+				encoding: "utf-8",
+				flag: "r"
+			});
+			const apkStringsData: any = xml2js(apkStringsXml, { compact: true });
+
+			const appname = apkStringsData?.resources?.string?.filter((x: any) => {
+				return x?._attributes?.name && x?._attributes?.name == "app_name";
+			})[0];
+
+			appname._text = appdata?.appinfo?.appname;
+
+			fs.writeFileSync(apkValuesDir + sep + "strings.xml", js2xml(apkStringsData, {
+				compact: true,
+				spaces: 4
+			}), {
+				encoding: "utf-8",
+				flag: "w"
+			});
+
+			// colors.xml
+			const apkColorsXml = fs.readFileSync(apkValuesDir + sep + "colors.xml", {
+				encoding: "utf-8",
+				flag: "r"
+			});
+			const apkColorsData: any = xml2js(apkColorsXml, { compact: true });
+
+			const colorPrimary = apkColorsData?.resources?.color?.filter((x: any) => {
+				return x?._attributes?.name && x?._attributes?.name == "colorPrimary";
+			})[0];
+
+			colorPrimary._text = appdata?.appinfo?.color;
+
+			fs.writeFileSync(apkValuesDir + sep + "colors.xml", js2xml(apkColorsData, {
+				compact: true,
+				spaces: 4
+			}), {
+				encoding: "utf-8",
+				flag: "w"
+			});
+
+
+			// Copy to assets
 			fs.cpSync(appdata.include, cachePath + sep + "assets", {
 				recursive: true,
 				force: true
