@@ -12,7 +12,7 @@ export interface Appinfo {
 	versionName: string,
 
 	color: string,
-	icons: any
+	icon: string
 }
 
 export interface AppYml {

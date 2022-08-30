@@ -12,6 +12,7 @@ import { closeLog, logPath } from "./controllers/Logger";
 import { Config, loadConfig, saveConfig } from "./controllers/Config";
 import { helpTxt } from "./controllers/Help";
 import { js2xml, xml2js } from "xml-js";
+import { resizeImage } from "./controllers/ResizeImage";
 
 
 export const Global = {
@@ -63,7 +64,7 @@ export async function main(argv2: string[]) {
 					color: "#0066FF",
 					versionCode: 1,
 					versionName: "1.0",
-					icons: null
+					icon: ""
 				}
 			};
 
@@ -185,7 +186,8 @@ export async function main(argv2: string[]) {
 
 			fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
 
-			const apkValuesDir = cachePath + sep + "res" + sep + "values";
+			const apkResDir = cachePath + sep + "res";
+			const apkValuesDir = apkResDir + sep + "values";
 
 			// strings.xml
 			const apkStringsXml = fs.readFileSync(apkValuesDir + sep + "strings.xml", {
@@ -229,6 +231,38 @@ export async function main(argv2: string[]) {
 				flag: "w"
 			});
 
+			// Icons
+			if (appdata?.appinfo?.icon) {
+				const prom: Promise<void>[] = [];
+
+				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
+					+ "mipmap-hdpi" + sep + "appicon.png", {
+					width: 162,
+					height: 162
+				}));
+				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
+					+ "mipmap-mdpi" + sep + "appicon.png", {
+					width: 108,
+					height: 108
+				}));
+				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
+					+ "mipmap-xhdpi" + sep + "appicon.png", {
+					width: 216,
+					height: 216
+				}));
+				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
+					+ "mipmap-xxhdpi" + sep + "appicon.png", {
+					width: 324,
+					height: 324
+				}));
+				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
+					+ "mipmap-xxxhdpi" + sep + "appicon.png", {
+					width: 432,
+					height: 432
+				}));
+
+				await Promise.all(prom);
+			}
 
 			// Copy to assets
 			fs.cpSync(appdata.include, cachePath + sep + "assets", {
