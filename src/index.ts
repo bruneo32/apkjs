@@ -1,19 +1,18 @@
 import fs from "fs";
+import { dump as JSY_Dump, load as JSY_Load } from "js-yaml";
 import { platform } from "os";
 import { sep } from "path";
-import { load as JSY_Load, dump as JSY_Dump } from "js-yaml";
 import promptSync from "prompt-sync";
 const prompt = promptSync();
 
+import { js2xml, xml2js } from "xml-js";
 import { com } from "./cmd";
 import { Appdata, AppYml, errorAppdata } from "./controllers/Appdata";
-import { exec } from "./exec";
-import { closeLog, logPath } from "./controllers/Logger";
 import { Config, loadConfig, saveConfig } from "./controllers/Config";
 import { helpTxt } from "./controllers/Help";
-import { js2xml, xml2js } from "xml-js";
+import { closeLog, logPath } from "./controllers/Logger";
 import { resizeImage } from "./controllers/ResizeImage";
-
+import { exec } from "./exec";
 
 export const Global = {
 	VERSION: 0.1,
@@ -21,8 +20,10 @@ export const Global = {
 	config: <Partial<Config>>{}
 };
 
+const __basedir = __dirname;
+
 export async function main(argv2: string[]) {
-	const cachePath = __dirname + sep + "__apk__";
+	const cachePath = __basedir + sep + "__apk__";
 
 	Global.config = loadConfig();
 	Global.isWin = platform().toLowerCase().includes("win");
@@ -276,7 +277,7 @@ export async function main(argv2: string[]) {
 			closeLog("$> " + com["apktool_b"]);
 			await exec(com["apktool_b"]);
 
-			fs.rename(__dirname + sep + "output.apk", appdata?.output, (err) => {
+			fs.rename(__basedir + sep + "output.apk", appdata?.output, (err) => {
 				if (err) { throw err; }
 				console.log('Successfully build apk')
 			});
@@ -302,7 +303,7 @@ export async function main(argv2: string[]) {
 				throw "Not such file '" + apkPath + "'";
 			}
 
-			const keystore = argv2[2] ?? __dirname + sep + "debug.keystore";
+			const keystore = argv2[2] ?? __basedir + sep + "debug.keystore";
 			const passw = argv2[3] ?? "123456";
 
 			if (!Global.config?.sdkBuildTools) {

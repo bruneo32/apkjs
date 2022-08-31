@@ -1,9 +1,11 @@
 import { writeFile } from "fs";
 import { sep } from "path";
 
+const __basedir = __dirname + sep + "..";
+
 export const logPath = {
-	info: __dirname + sep + "info.log",
-	error: __dirname + sep + "error.log"
+	info: __basedir + sep + "info.log",
+	error: __basedir + sep + "error.log"
 };
 
 export enum LOG_LEVEL {
@@ -17,7 +19,7 @@ export async function closeLog(logEntry: string, logLevel?: number) {
 	if (!logLevel) { logLevel = LOG_LEVEL.INFO; }
 	const dumpFile = (logLevel == LOG_LEVEL.ERROR) ? logPath.error : logPath.info;
 
-	writeFile(dumpFile, dt + ":\t" + logEntry + "\n", {
+	writeFile(dumpFile, "[" + dt + "]\t" + logEntry + "\n", {
 		encoding: "utf-8",
 		flag: "a"
 	}, (err) => {
@@ -26,18 +28,10 @@ export async function closeLog(logEntry: string, logLevel?: number) {
 }
 
 export function devDate(date: Date): string {
-	return new Date(Date.UTC(
-		date.getFullYear(),
-		date.getMonth(),
-		date.getDate(),
-		date.getHours(),
-		date.getMinutes(),
-		date.getSeconds())
-	).toLocaleDateString("en-GB", {
-		day: "numeric",
-		month: "numeric",
-		year: "numeric",
-		hour: "numeric",
-		minute: "numeric"
+	return date.toLocaleDateString("en-GB", {
+		hour: "2-digit",
+		minute: "2-digit",
+		timeZone: "UTC",
+		timeZoneName: "short"
 	});
 }
