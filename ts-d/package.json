@@ -9,8 +9,8 @@
   "license": "MIT",
   "repository": {
       "type": "git",
-      "url": "https://github.com/bruneo32/AndroidJS",
+      "url": "https://github.com/bruneo32/AndroidJS.git",
       "directory": "ts-d"
   },
-  "homepage": "https://github.com/bruneo32/AndroidJS/ts-d/"
+  "homepage": "https://github.com/bruneo32/AndroidJS/blob/main/ts-d/README.md"
 }
