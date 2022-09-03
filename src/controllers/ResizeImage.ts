@@ -7,7 +7,7 @@ export async function resizeImage(originalImage: string, outputImage: string, si
 				fit: "fill",
 				width: size.width,
 				height: size.height
-			}).toFormat("png", {
+			}).toFormat("webp", {
 				force: true
 			}).toFile(outputImage);
 	} catch (err) {

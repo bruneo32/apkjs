@@ -156,7 +156,7 @@ export async function main(argv2: string[]) {
 			// Decompile base.apk
 			// If already decompiled, do not decompile again
 			if (!fs.existsSync(cachePath)) {
-				console.log("Decoding... (once, this will be cached)");
+				console.log("Decoding... (once, this will be cached. Be patient)");
 				closeLog("$> " + com["apktool_d"]);
 				await exec(com["apktool_d"]);
 			} else {
@@ -237,27 +237,27 @@ export async function main(argv2: string[]) {
 				const prom: Promise<void>[] = [];
 
 				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
-					+ "mipmap-hdpi" + sep + "appicon.png", {
+					+ "mipmap-hdpi" + sep + "appicon.webp", {
 					width: 162,
 					height: 162
 				}));
 				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
-					+ "mipmap-mdpi" + sep + "appicon.png", {
+					+ "mipmap-mdpi" + sep + "appicon.webp", {
 					width: 108,
 					height: 108
 				}));
 				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
-					+ "mipmap-xhdpi" + sep + "appicon.png", {
+					+ "mipmap-xhdpi" + sep + "appicon.webp", {
 					width: 216,
 					height: 216
 				}));
 				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
-					+ "mipmap-xxhdpi" + sep + "appicon.png", {
+					+ "mipmap-xxhdpi" + sep + "appicon.webp", {
 					width: 324,
 					height: 324
 				}));
 				prom.push(resizeImage(appdata.appinfo.icon, apkResDir + sep
-					+ "mipmap-xxxhdpi" + sep + "appicon.png", {
+					+ "mipmap-xxxhdpi" + sep + "appicon.webp", {
 					width: 432,
 					height: 432
 				}));
@@ -279,7 +279,9 @@ export async function main(argv2: string[]) {
 
 			fs.rename(__basedir + sep + "output.apk", appdata?.output, (err) => {
 				if (err) { throw err; }
-				console.log('Successfully build apk')
+
+				console.log("Successfully build apk");
+				console.log("Don't forget to sign the apk");
 			});
 
 		} break;
