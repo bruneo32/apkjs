@@ -15,7 +15,7 @@ import { resizeImage } from "./controllers/ResizeImage";
 import { exec } from "./exec";
 
 export const Global = {
-	VERSION: 0.1,
+	VERSION: "1.0.0",
 	isWin: false,
 	config: <Partial<Config>>{}
 };
@@ -45,7 +45,7 @@ export async function main(argv2: string[]) {
 		case "-v":
 		case "--version":
 		case "version": {
-			console.log(Global.VERSION.toFixed(1));
+			console.log(Global.VERSION);
 		} break;
 
 		case "init": {
