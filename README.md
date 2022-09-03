@@ -73,7 +73,7 @@ Ex.:  androidjs init help
 
 
 ### How does it work
-AndroidJS has a prebuilt APK ready to be decompiled,  with an empty HTML and a JsInterface (for native purposes).
+AndroidJS has a prebuilt APK (base.apk) ready to be decompiled,  with an empty HTML and a JSInterface (for native purposes).
 
 Build process:
 - Decompile base.apk
@@ -104,9 +104,9 @@ This file describes how AndroidJS will build your application.
 	}
 }
 ```
-When building this appdata.json, AndroidJS will include everything from `src/` into base.apk and copy the output to `release/my-app.apk`
+When building this appdata.json, AndroidJS will include everything from `src/` into base.apk and build it to `release/my-app.apk`
 
-**Important!** base.apk entry point is index.html, so there must be inside `src/` a file named `index.html`
+**Important** base.apk entry point is **index.html**, so there must be inside `src/` a file named `index.html`
 
 ### JSInterface
 AndroidJS come along with a prebuilt interface to perform native Android functions *(show a toast, message, notification, etc)*

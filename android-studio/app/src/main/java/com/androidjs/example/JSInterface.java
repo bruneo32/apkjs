@@ -136,7 +136,7 @@ public class JSInterface {
 	public Class importClass(String filename, String forname) {
 		// TODO: TEST
 		File myJar = new File(filename);
-		Class<?> a = null;
+		Class<?> a = null; // TODO: Scope diying
 
 		try {
 			URLClassLoader child = new URLClassLoader(
