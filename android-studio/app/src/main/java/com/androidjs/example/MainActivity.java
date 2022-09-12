@@ -1,7 +1,6 @@
 package com.androidjs.example;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsPromptResult;
@@ -11,6 +10,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,29 +36,30 @@ public class MainActivity extends AppCompatActivity {
 
 		try {
 			// Get webview & errorLabel
-			webView = (WebView) findViewById(R.id.webview0);
+			webView = findViewById(R.id.webview0);
+
 			webView.setWebViewClient(new WebViewClient() {
 				@Override
 				public boolean shouldOverrideUrlLoading(WebView view, String url) {
-					//view.loadUrl(url);
 					return false;
 				}
 			});
+
 			webView.setWebChromeClient(new WebChromeClient() {
 				@Override
-				public void onProgressChanged(WebView view, int newProgress) {
+				public void onProgressChanged(WebView view, int progress) {
 					if (!updateTitle) {
 						return;
 					}
 
 					// Change the Title in ActionBar on changed
 					getSupportActionBar().setTitle(view.getTitle());
-					super.onProgressChanged(view, newProgress);
+					super.onProgressChanged(view, progress);
 				}
 
 				@Override
 				public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-					showMessage("Console Log", consoleMessage.message());
+					Toast.makeText(getApplicationContext(), "["+consoleMessage.messageLevel() +"] "+ consoleMessage.message(), Toast.LENGTH_SHORT).show();
 					return super.onConsoleMessage(consoleMessage);
 				}
 
@@ -115,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
 			// Allows
 			webSettings.setJavaScriptEnabled(true);
+			webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+			webSettings.setSupportMultipleWindows(true);
 			webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 			webSettings.setDisplayZoomControls(false);
 			webSettings.setAllowFileAccess(true);
@@ -127,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
 			webSettings.setPluginState(WebSettings.PluginState.ON_DEMAND);
 			webSettings.setJavaScriptEnabled(true);
 			webSettings.setLoadWithOverviewMode(true);
+			webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 
 			// Setup JavaScriptInterface
 			webView.addJavascriptInterface(new JSInterface(this, webView, webSettings), "Android");
