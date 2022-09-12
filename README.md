@@ -120,3 +120,22 @@ See all in
 [@types/androidjs](https://www.npmjs.com/package/@types/androidjs)
 
 ---
+
+# Build Source
+
+### Build Android Studio project
+1. Build APK for Release using `/android-studio/app/release.jks` for signing
+```
+Build > Generate Signed Bundle/APK > APK > (Enter Keystore Info) > release > *Finish*
+```
+
+2. Copy the built apk to `/assets/base.apk`
+```sh
+cp android-studio/app/release/app-release.apk assets/base.apk
+```
+
+3. Build the typescript source
+```sh
+npm run build
+```
+(use `tsc` if you dont want to copy the assets to `dist/`)
