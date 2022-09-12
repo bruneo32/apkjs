@@ -33,7 +33,7 @@ declare namespace Android {
 	 * @param message Message to display
 	 * @param duration Duration of the toast
 	 */
-	function showToast(message: string, duration: ToastLen): void;
+	function showToast(message: string, duration: 0 | 1): void;
 
 	/**
 	 * Display a message prompt with
@@ -80,7 +80,7 @@ declare namespace Android {
 	 *
 	 * @param state State to set (If true, VISIBLE, else HIDEN)
 	 */
-	function showActionBar(state: boolean);
+	function showActionBar(state: boolean): void;
 
 	/**
 	 * Return the visibility state of the ActionBar
@@ -92,14 +92,14 @@ declare namespace Android {
 	 * @param filename Path to .class file (must be app-included)
 	 * @param forname alias to reference the imported class
 	 */
-	function importClass(filename: string, forname: string);
+	function importClass(filename: string, forname: string): void;
 
 
 
 	/* TYPES
 	======================== */
 
-	type Activity = object; // TODO
+	type Activity = any; // TODO
 
 	/**
 	 * Options of app messages in general
@@ -109,17 +109,16 @@ declare namespace Android {
 	}
 
 
-	const enum ToastLen {
-		/**
-		 * Show the view or text notification for a short period of time.
-		 */
-		SHORT = 0,
+	/**
+	 * Show the view or text notification for a short period of time.
+	 */
+	const TOAST_SHORT = 0;
 
-		/**
-		 * Show the view or text notification for a long period of time.
-		 */
-		LONG
-	}
+	/**
+	 * Show the view or text notification for a long period of time.
+	 */
+	const TOAST_LONG = 1;
+
 
 	const enum ScreenOrientation {
 		/**

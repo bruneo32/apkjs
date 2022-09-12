@@ -281,7 +281,7 @@ export async function main(argv2: string[]) {
 				if (err) { throw err; }
 
 				console.log("Successfully build apk");
-				console.log("Don't forget to sign the apk");
+				console.log("(Don't forget to sign the apk)");
 			});
 
 		} break;
@@ -316,9 +316,10 @@ export async function main(argv2: string[]) {
 						: "<sdk>/build-tools/31.0.0") + ")");
 				console.log();
 
-				Global.config.sdkBuildTools = prompt("SDK Path? ");
-				if (!Global.config?.sdkBuildTools) { throw "No SDK provided, sign by yourself"; }
+				const sdkPath = prompt("SDK Path? ");
+				if (!sdkPath) { throw "No SDK provided, sign by yourself"; }
 
+				Global.config.sdkBuildTools = sdkPath;
 				saveConfig(Global.config);
 			}
 
