@@ -5,7 +5,6 @@ export interface Appdata {
 }
 
 export interface Appinfo {
-
 	package: string,
 	appname: string,
 	versionCode: number,

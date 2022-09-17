@@ -1,6 +1,4 @@
-
 export const helpTxt: Record<string, string> = {
-
 	"help":
 		"usage: androidjs -h|--help|help",
 
