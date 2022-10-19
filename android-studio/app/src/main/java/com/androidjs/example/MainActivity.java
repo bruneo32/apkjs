@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 	public static boolean updateTitle = true;
 	public static String msgTitle = null;
 
-
+	@SuppressWarnings("deprecation")
 	@SuppressLint({"SetJavaScriptEnabled"})
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

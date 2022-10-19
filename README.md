@@ -1,5 +1,3 @@
-![](appicon.webp)
-
 This command line interface enables you to build very fast and lightweight Android Applications from your JS/TS Frontend.
 
 
@@ -125,13 +123,14 @@ See all in
 
 ### Build Android Studio project
 1. Build APK for Release using `/android-studio/app/release.jks` for signing
-```
-Build > Generate Signed Bundle/APK > APK > (Enter Keystore Info) > release > *Finish*
+```sh
+./gradlew clean
+./gradlew :app:assembleRelease
 ```
 
 2. Copy the built apk to `/assets/base.apk`
 ```sh
-cp android-studio/app/release/app-release.apk assets/base.apk
+cp -fv android-studio/app/build/outputs/apk/release/app-release-unsigned.apk assets/base.apk
 ```
 
 3. Build the typescript source
@@ -139,3 +138,5 @@ cp android-studio/app/release/app-release.apk assets/base.apk
 npm run build
 ```
 (use `tsc` if you dont want to copy the assets to `dist/`)
+
+![appicon](appicon.webp)

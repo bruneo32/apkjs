@@ -8,10 +8,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 public class JSInterface {
 
@@ -33,14 +29,15 @@ public class JSInterface {
 	}
 
 	//// JS API
+
 	@JavascriptInterface
 	public Activity getActivity() {
 		return activity;
 	}
 
 	@JavascriptInterface
-	public int getVersion() {
-		return android.os.Build.VERSION.SDK_INT;
+	public String getLocale() {
+		return activity.getResources().getConfiguration().locale.toString();
 	}
 
 	// MESSAGES
@@ -93,7 +90,6 @@ public class JSInterface {
 	public void showFullscreen(boolean state) {
 		activity.runOnUiThread(() -> {
 			if (state) {
-				// TODO: FIX CUTOUT
 				activity.getWindow().getDecorView().setSystemUiVisibility(uio_fullscreen);
 			} else {
 				activity.getWindow().getDecorView().setSystemUiVisibility(uio_default);
@@ -128,27 +124,5 @@ public class JSInterface {
 	@JavascriptInterface
 	public boolean getActionBarVisibility() {
 		return (activity.getSupportActionBar() != null && activity.getSupportActionBar().isShowing());
-	}
-
-
-	// CLASSES
-	@JavascriptInterface
-	public Class importClass(String filename, String forname) {
-		// TODO: TEST
-		File myJar = new File(filename);
-		Class<?> a = null; // TODO: Scope diying
-
-		try {
-			URLClassLoader child = new URLClassLoader(
-					new URL[]{myJar.toURI().toURL()},
-					this.getClass().getClassLoader()
-			);
-
-			a = Class.forName(forname);
-		} catch (MalformedURLException | ClassNotFoundException e) {
-			return null;
-		}
-
-		return a;
 	}
 }
