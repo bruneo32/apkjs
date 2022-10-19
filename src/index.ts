@@ -7,7 +7,7 @@ const prompt = promptSync();
 
 import { js2xml, xml2js } from "xml-js";
 import { com } from "./cmd";
-import { Appdata, AppYml, errorAppdata } from "./controllers/Appdata";
+import { Appdata, AppYml, defaultAppdata, errorAppdata } from "./controllers/Appdata";
 import { Config, loadConfig, saveConfig } from "./controllers/Config";
 import { helpTxt } from "./controllers/Help";
 import { closeLog, logPath } from "./controllers/Logger";
@@ -22,13 +22,13 @@ export const Global = {
 
 const __basedir = __dirname;
 
-export async function main(argv2: string[]) {
+export async function main(argv: string[]) {
 	const cachePath = __basedir + sep + "__apk__";
 
 	Global.config = loadConfig();
 	Global.isWin = platform().toLowerCase().includes("win");
 
-	switch (argv2[0]) {
+	switch (argv[0]) {
 		case "-h":
 		case "--help":
 		case "help": {
@@ -49,25 +49,12 @@ export async function main(argv2: string[]) {
 		} break;
 
 		case "init": {
-			if (argv2[1] && argv2[1] == "help") {
+			if (argv[1] && argv[1] == "help") {
 				console.log(helpTxt["init"]);
 				break;
 			}
 
-			const appdataPath = argv2[1] ?? "appdata.json";
-
-			const defaultAppdata: Appdata = {
-				include: "dist",
-				output: "output.apk",
-				appinfo: {
-					package: "com.company.example",
-					appname: "example",
-					color: "#0066FF",
-					versionCode: 1,
-					versionName: "1.0",
-					icon: ""
-				}
-			};
+			const appdataPath = argv[1] ?? "appdata.json";
 
 			if (fs.existsSync(appdataPath)) {
 				throw "Already exists '" + appdataPath + "'";
@@ -84,7 +71,7 @@ export async function main(argv2: string[]) {
 
 		case "cc":
 		case "clear-cache": {
-			if (argv2[1] && argv2[1] == "help") {
+			if (argv[1] && argv[1] == "help") {
 				console.log(helpTxt["clearCache"]);
 				break;
 			}
@@ -96,7 +83,7 @@ export async function main(argv2: string[]) {
 
 			fs.rm(cachePath, {
 				recursive: true,
-				force: true,
+				force: true
 			}, (err) => {
 				if (err) { throw err; }
 				console.log("Cache clear successful");
@@ -105,7 +92,7 @@ export async function main(argv2: string[]) {
 		} break;
 
 		case "clear-logs": {
-			if (argv2[1] && argv2[1] == "help") {
+			if (argv[1] && argv[1] == "help") {
 				console.log(helpTxt["clearLogs"]);
 				break;
 			}
@@ -116,13 +103,13 @@ export async function main(argv2: string[]) {
 			}
 
 			fs.rm(logPath.info, {
-				force: true,
+				force: true
 			}, (err) => {
 				if (err) { throw err; }
 			});
 
 			fs.rm(logPath.error, {
-				force: true,
+				force: true
 			}, (err) => {
 				if (err) { throw err; }
 			});
@@ -130,12 +117,12 @@ export async function main(argv2: string[]) {
 
 		case "b":
 		case "build": {
-			if (argv2[1] && argv2[1] == "help") {
+			if (argv[1] && argv[1] == "help") {
 				console.log(helpTxt["build"]);
 				break;
 			}
 
-			const appdataPath = argv2[1] ?? "appdata.json";
+			const appdataPath = argv[1] ?? "appdata.json";
 			let appdata: Appdata | null = null;
 
 			if (!fs.existsSync(appdataPath) || !fs.lstatSync(appdataPath).isFile()) {
@@ -185,7 +172,7 @@ export async function main(argv2: string[]) {
 			ymlData.versionInfo.versionCode = appdata?.appinfo?.versionCode?.toString() ?? 1;
 			ymlData.versionInfo.versionName = appdata?.appinfo?.versionName ?? "1.0";
 
-			fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData,), { encoding: "utf-8", flag: "w" });
+			fs.writeFileSync(ymlPath, "!!brut.androlib.meta.MetaInfo\n" + JSY_Dump(ymlData), { encoding: "utf-8", flag: "w" });
 
 			const apkResDir = cachePath + sep + "res";
 			const apkValuesDir = apkResDir + sep + "values";
@@ -288,12 +275,12 @@ export async function main(argv2: string[]) {
 
 		case "sign":
 		case "s": {
-			if (argv2[1] && argv2[1] == "help") {
+			if (argv[1] && argv[1] == "help") {
 				console.log(helpTxt["sign"]);
 				break;
 			}
 
-			const apkPath = argv2[1];
+			const apkPath = argv[1];
 			if (!apkPath) {
 				console.log("! Keytool is part of JDK (required)");
 				console.log("To generate a keystore use: (change: my-keystore.keystore, name_alias)");
@@ -305,8 +292,8 @@ export async function main(argv2: string[]) {
 				throw "Not such file '" + apkPath + "'";
 			}
 
-			const keystore = argv2[2] ?? __basedir + sep + "debug.keystore";
-			const passw = argv2[3] ?? "123456";
+			const keystore = argv[2] ?? __basedir + sep + "debug.keystore";
+			const passw = argv[3] ?? "123456";
 
 			if (!Global.config?.sdkBuildTools) {
 				console.log("For legal issues we cannot pack any SDK from android inside AndroidJS");

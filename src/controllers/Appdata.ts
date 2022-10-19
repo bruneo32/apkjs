@@ -43,3 +43,16 @@ export function errorAppdata(appdata: Appdata): string {
 
 	return "";
 }
+
+export const defaultAppdata: Appdata = {
+	include: "dist",
+	output: "output.apk",
+	appinfo: {
+		package: "com.company.example",
+		appname: "example",
+		color: "#0066FF",
+		versionCode: 1,
+		versionName: "1.0",
+		icon: ""
+	}
+};

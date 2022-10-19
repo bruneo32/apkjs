@@ -21,9 +21,10 @@ declare namespace Android {
 	function getActivity(): Activity;
 
 	/**
-	 * Return Build.VERSION.SDK_INT
+	 * Return the device locale language-country.
+	 * Example: "en-US", "en-GB", "es-ES"
 	 */
-	function getVersion(): number;
+	function getLocale(): string;
 
 	/**
 	 * Display a Toast message.
