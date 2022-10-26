@@ -88,19 +88,12 @@ declare namespace Android {
 	 */
 	function getActionBarVisibility(): boolean;
 
-	/**
-	 * Import Java Class file, included in the app
-	 * @param filename Path to .class file (must be app-included)
-	 * @param forname alias to reference the imported class
-	 */
-	function importClass(filename: string, forname: string): void;
-
 
 
 	/* TYPES
 	======================== */
 
-	type Activity = any; // TODO
+	type Activity = any;
 
 	/**
 	 * Options of app messages in general
