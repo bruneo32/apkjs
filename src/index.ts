@@ -32,14 +32,14 @@ export async function main(argv: string[]) {
 		case "-h":
 		case "--help":
 		case "help": {
-			console.log("AndroidJS: Build frontend into Android APK\n");
+			console.log("apkjs: Build frontend into Android APK\n");
 
 			for (const k of Object.keys(helpTxt)) {
 				console.log(helpTxt[k] + "\n");
 			}
 
 			console.log("Type a command followed by 'help' to get specific information.");
-			console.log("Ex.:  androidjs init help");
+			console.log("Ex.:  apkjs init help");
 		} break;
 
 		case "-v":
@@ -147,7 +147,7 @@ export async function main(argv: string[]) {
 				closeLog("$> " + com["apktool_d"]);
 				await exec(com["apktool_d"]);
 			} else {
-				console.log("WARN! Already decoded cache. If unexpected problems, try 'androidjs clear-cache'");
+				console.log("WARN! Already decoded cache. If unexpected problems, try 'apkjs clear-cache'");
 				fs.rmSync(cachePath + sep + "assets" + sep + "*", {
 					recursive: true,
 					force: true
@@ -296,8 +296,8 @@ export async function main(argv: string[]) {
 			const passw = argv[3] ?? "123456";
 
 			if (!Global.config?.sdkBuildTools) {
-				console.log("For legal issues we cannot pack any SDK from android inside AndroidJS");
-				console.log("You need to setup SDK BuildTools Path for AndroidJS (Usually is: "
+				console.log("For legal issues we cannot pack any SDK from android inside apkjs");
+				console.log("You need to setup SDK BuildTools Path for apkjs (Usually is: "
 					+ (Global.isWin
 						? "C:\\Users\\{Username}\\AppData\\Local\\Android\\Sdk\\build-tools\\31.0.0"
 						: "<sdk>/build-tools/31.0.0") + ")");
@@ -331,7 +331,7 @@ export async function main(argv: string[]) {
 		} break;
 
 		default: {
-			console.log("Nothing to do. Type 'androidjs --help' to get more information");
+			console.log("Nothing to do. Type 'apkjs --help' to get more information");
 		} break;
 	}
 

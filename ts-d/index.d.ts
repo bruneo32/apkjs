@@ -1,6 +1,6 @@
-// Type definitions for AndroidJS Interface 1.0.0
-// Project: https://github.com/bruneo32/AndroidJS
-// Definitions: https://github.com/bruneo32/AndroidJS/tree/main/ts-d
+// Type definitions for apkjs Interface 1.0.0
+// Project: https://github.com/bruneo32/apkjs
+// Definitions: https://github.com/bruneo32/apkjs/tree/main/ts-d
 // TypeScript Version: 2.1
 
 
@@ -8,7 +8,7 @@ export = Android;
 
 
 /**
- * AndroidJS JSInterface
+ * apkjs JSInterface
  */
 declare namespace Android {
 

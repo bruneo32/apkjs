@@ -1,10 +1,10 @@
 {
-  "name": "androidjs",
+  "name": "apkjs",
   "version": "1.0.0",
   "description": "Build a frontend into Android APK",
   "main": "dist/index.js",
   "bin": {
-    "androidjs": "dist/bin.js"
+    "apkjs": "dist/bin.js"
   },
   "files": [
     "dist/**/*"
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bruneo32/AndroidJS.git"
+    "url": "git+https://github.com/bruneo32/apkjs.git"
   },
   "author": "Bruno Castro Garcia",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bruneo32/AndroidJS/issues"
+    "url": "https://github.com/bruneo32/apkjs/issues"
   },
-  "homepage": "https://github.com/bruneo32/AndroidJS#readme",
+  "homepage": "https://github.com/bruneo32/apkjs#readme",
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^18.7.11",

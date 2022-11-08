@@ -1,5 +1,5 @@
 # Installation
-> `npm install --save @types/androidjs`
+> `npm install --save @types/apkjs`
 
 # Summary
-This package contains type definitions for AndroidJS Interface (https://github.com/bruneo32/AndroidJS/).
+This package contains type definitions for apkjs Interface (https://github.com/bruneo32/apkjs/).

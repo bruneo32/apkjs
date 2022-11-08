@@ -1,48 +1,48 @@
 This command line interface enables you to build very fast and lightweight Android Applications from your JS/TS Frontend.
 
+# apkjs
+Compile frontend applications into Android APK
 
 ## Usage
+> npm install -g apkjs
 
-```sh
-npm install -g androidjs
-```
 
-After installing it, run `androidjs --help` to see list of options:
+After installing it, run `apkjs --help` to see list of options:
 
 ```console
-AndroidJS: Build frontend into Android APK
+apkjs: Build frontend into Android APK
 
-usage: androidjs -h|--help|help
+usage: apkjs -h|--help|help
 
-usage: androidjs -v|--version|version
+usage: apkjs -v|--version|version
 
-usage: androidjs init [appdata?]
+usage: apkjs init [appdata?]
   appdata          Path to create APK building info file
                    [Default: 'appdata.json']
  - Create APK building info file with default values
 
-usage: androidjs cc|clear-cache
+usage: apkjs cc|clear-cache
  - Clear cache from previous compilation
 
-usage: androidjs clear-logs
- - Clear error.log and info.log. (.../node_modules/androidjs/)
+usage: apkjs clear-logs
+ - Clear error.log and info.log. (.../node_modules/apkjs/)
 
-usage: androidjs b|build [appdata?]
+usage: apkjs b|build [appdata?]
   appdata          Build APK with building info located in appdata
                    [Default: 'appdata.json']
  - Build APK from building info file
  + Requires: JAVA
 
-usage: androidjs s|sign
+usage: apkjs s|sign
  - Instructions to generate custom Keystore file
 
-usage: androidjs s|sign [apk] [keystore?] [password?]
+usage: apkjs s|sign [apk] [keystore?] [password?]
   apk              Already built APK to be signed
-  keystore         Keystore file. [Default: debug.keystore (.../node_modules/androidjs/)]
+  keystore         Keystore file. [Default: debug.keystore (.../node_modules/apkjs/)]
   password         Keystore Password. [Default: 123456 (debug.keystore password)]
  - Sign APK with custom keystore
 
-usage: androidjs s|sign [apk]
+usage: apkjs s|sign [apk]
  - Sign APK with a debug keystore
  + Intended for testing
 
@@ -50,28 +50,28 @@ usage: androidjs s|sign [apk]
  ! Requires: SDK
 
 Type a command followed by 'help' to get specific information.
-Ex.:  androidjs init help
+Ex.:  apkjs init help
 
 
   Examples:
 
   – Create appdata.json in cwd
-    $ androidjs init
+    $ apkjs init
   – Build APK (apk cannot be installed without signing)
-    $ androidjs b appdata.json
+    $ apkjs b appdata.json
   – Sign APK for testing/debugging
-    $ androidjs s my-app.apk
+    $ apkjs s my-app.apk
   – Sign APK for release
-    $ androidjs s my-apk release-keystore.jks passwd
+    $ apkjs s my-apk release-keystore.jks passwd
   – Get specific help for clear-cache
-    $ androidjs cc help
+    $ apkjs cc help
   – Clear cache
-    $ androidjs cc
+    $ apkjs cc
 ```
 
 
 ### How does it work
-AndroidJS has a prebuilt APK (base.apk) ready to be decompiled,  with an empty HTML and a JSInterface (for native purposes).
+apkjs has a prebuilt APK (base.apk) ready to be decompiled,  with an empty HTML and a JSInterface (for native purposes).
 
 Build process:
 - Decompile base.apk
@@ -83,11 +83,11 @@ Build process:
 ### Cache?
 Since the decompilation process is very long, it is being saved (cached) for not decompile again.
 
-If there is some issue with the cached base.apk you can type `androidjs clear-cache` or `androidjs cc` to remove this saved instance of invalid base apk.
+If there is some issue with the cached base.apk you can type `apkjs clear-cache` or `apkjs cc` to remove this saved instance of invalid base apk.
 
 
 ### Appdata.json
-This file describes how AndroidJS will build your application.
+This file describes how apkjs will build your application.
 ```json
 {
 	"include": "src",
@@ -102,12 +102,12 @@ This file describes how AndroidJS will build your application.
 	}
 }
 ```
-When building this appdata.json, AndroidJS will include everything from `src/` into base.apk and build it to `release/my-app.apk`
+When building this appdata.json, apkjs will include everything from `src/` into base.apk and build it to `release/my-app.apk`
 
 **Important** base.apk entry point is **index.html**, so there must be inside `src/` a file named `index.html`
 
 ### JSInterface
-AndroidJS come along with a prebuilt interface to perform native Android functions *(show a toast, message, notification, etc)*
+apkjs come along with a prebuilt interface to perform native Android functions *(show a toast, message, notification, etc)*
 
 This example shows how to make a toast:
 ```javascript
@@ -115,7 +115,7 @@ Android.showToast("Hello World", Android.TOAST_SHORT);
 ```
 
 See all in
-[@types/androidjs](https://www.npmjs.com/package/@types/androidjs)
+[@types/apkjs](https://www.npmjs.com/package/@types/apkjs)
 
 ---
 
