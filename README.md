@@ -1,7 +1,5 @@
 This command line interface enables you to build very fast and lightweight Android Applications from your JS/TS Frontend.
 
-# apkjs
-Compile frontend applications into Android APK
 
 ## Usage
 > npm install -g apkjs
