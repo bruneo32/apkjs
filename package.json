@@ -18,7 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/bruneo32/apkjs.git"
   },
-  "author": "Bruno Castro Garcia",
+  "author": "Bruno Castro Garcia <bruneo32b@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/bruneo32/apkjs/issues"
@@ -35,5 +35,11 @@
     "prompt-sync": "^4.2.0",
     "sharp": "^0.30.7",
     "xml-js": "^1.6.11"
-  }
+  },
+  "keywords": [
+    "build",
+    "android",
+    "mobile",
+    "app"
+  ]
 }
